@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>SmartRestaurant · add billing</title>
+
+    <!-- Google Fonts + Font Awesome 6 (consistent theme) -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- Bootstrap (for grid structure, heavily styled) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f0f5fa;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 20px;
+        }
+
+        /* animated background orbs (same family) */
+        body::before {
+            content: '';
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle at 30% 30%, #ff6b35, #ffa05e);
+            top: -60px;
+            left: -60px;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.25;
+            animation: orbMove 16s infinite alternate;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle at 70% 80%, #4a90e2, #a855f7);
+            bottom: -80px;
+            right: -70px;
+            border-radius: 50%;
+            filter: blur(130px);
+            opacity: 0.2;
+            animation: orbMove2 20s infinite alternate;
+            z-index: 0;
+        }
+
+        @keyframes orbMove {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(50px, 30px) scale(1.3); }
+        }
+        @keyframes orbMove2 {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(-70px, -20px) scale(1.4); }
+        }
+
+        /* main card – glassmorphism with theme */
+        .billing-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-radius: 70px 24px 70px 24px;
+            box-shadow: 0 40px 70px -20px #00000080, 0 0 0 1px rgba(255, 107, 53, 0.3);
+            width: 100%;
+            max-width: 1100px;
+            z-index: 10;
+            position: relative;
+            overflow: hidden;
+            animation: cardGlide 0.7s cubic-bezier(0.2, 0.9, 0.3, 1);
+            border: 1px solid rgba(255, 107, 53, 0.4);
+        }
+
+        @keyframes cardGlide {
+            0% { opacity: 0; transform: scale(0.94) translateY(30px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        /* header with back button + title – exact style */
+        .billing-header {
+            background: linear-gradient(105deg, #0b1725, #162433);
+            padding: 20px 35px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            border-bottom: 2px solid #ff6b35;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid #ff6b35;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+            padding: 10px 25px 10px 18px;
+            border-radius: 50px 12px 50px 12px;
+            cursor: pointer;
+            transition: 0.25s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(4px);
+        }
+
+        .back-btn i {
+            font-size: 1.3rem;
+            color: #ffb347;
+        }
+
+        .back-btn:hover {
+            background: #ff6b35;
+            border-color: white;
+            transform: translateX(-5px);
+        }
+        .back-btn:hover i {
+            color: white;
+        }
+
+        .billing-header h2 {
+            color: white;
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-left: auto;
+            letter-spacing: -0.5px;
+        }
+        .billing-header h2 i {
+            color: #ffb347;
+            margin-right: 12px;
+        }
+
+        /* form container */
+        .form-container {
+            padding: 40px 45px 45px;
+            background: #ffffffd9;
+        }
+
+        /* labels with icons */
+        .form-label {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #1e293b;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .form-label i {
+            color: #ff6b35;
+            width: 22px;
+            font-size: 1.1rem;
+        }
+
+        /* form controls – theme rounded */
+        .form-control, .form-select {
+            width: 100%;
+            padding: 14px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 40px 12px 40px 12px !important;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            background: white;
+            transition: all 0.2s ease;
+            outline: none;
+            box-shadow: none;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #ff6b35;
+            box-shadow: 0 0 0 5px #ff6b3520, 0 8px 12px -10px black;
+            transform: scale(1.01);
+        }
+
+        /* textarea specific */
+        textarea.form-control {
+            border-radius: 40px 12px 40px 12px !important;
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        /* invoice items table (mini) */
+        .items-table {
+            border-radius: 40px 12px 40px 12px;
+            overflow: hidden;
+            border: 2px solid #ffe2d6;
+            margin: 20px 0;
+        }
+
+        .items-table thead {
+            background: linear-gradient(145deg, #ff6b35, #ff914d);
+            color: white;
+        }
+
+        .items-table th, .items-table td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #f1c9b8;
+        }
+
+        .items-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .add-item-row {
+            background: #fff9f5;
+            border-radius: 40px;
+            padding: 10px;
+            margin-top: 15px;
+        }
+
+        /* total amount highlight */
+        .total-amount {
+            background: #f1f6fc;
+            border-radius: 60px 12px 60px 12px;
+            padding: 20px 30px;
+            border-left: 8px solid #ff6b35;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        /* action buttons */
+        .btn-generate {
+            background: linear-gradient(135deg, #ff6b35, #ff4a1c);
+            border: none;
+            padding: 16px 45px;
+            border-radius: 60px 12px 60px 12px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            transition: 0.25s;
+            box-shadow: 0 20px 30px -10px #ff4d2e;
+            border: 1px solid rgba(255,255,255,0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-generate:hover {
+            background: linear-gradient(145deg, #ff801f, #ff3c00);
+            transform: scale(1.03) translateY(-3px);
+            box-shadow: 0 28px 40px -8px #ff3c00;
+        }
+
+        .btn-clear {
+            background: transparent;
+            border: 2px solid #cbd5e1;
+            padding: 16px 45px;
+            border-radius: 60px 12px 60px 12px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #334155;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-clear:hover {
+            background: #f1f5f9;
+            border-color: #ff6b35;
+            color: #ff6b35;
+        }
+
+        .button-row {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            flex-wrap: wrap;
+            margin-top: 35px;
+        }
+
+        /* floating helper (same as other pages) */
+        .floating-helper {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            opacity: 0.4;
+            font-size: 0.9rem;
+            z-index: 99;
+        }
+
+        @media (max-width: 700px) {
+            .billing-header { flex-direction: column; align-items: start; }
+            .billing-header h2 { margin-left: 0; }
+            .form-container { padding: 25px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="billing-card">
+
+    <!-- header with back button (consistent) -->
+    <div class="billing-header">
+        <button class="back-btn" onclick="window.location.href='/back'">
+            <i class="fas fa-arrow-left"></i> Back
+        </button>
+        <h2><i class="fas fa-file-invoice"></i> add billing details</h2>
+    </div>
+
+    <!-- form container -->
+    <div class="form-container">
+
+        <form action="/saveBill" method="post" th:action="@{/saveBill}">
+
+            <div class="row g-4">
+                <!-- Customer section -->
+                <div class="col-md-6">
+                    <label class="form-label"><i class="fas fa-user"></i> Customer name *</label>
+                    <input type="text" class="form-control" name="customerName" placeholder="e.g. John Doe" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label"><i class="fas fa-phone-alt"></i> Phone / contact</label>
+                    <input type="text" class="form-control" name="customerPhone" placeholder="+1 234 567 890">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label"><i class="fas fa-envelope"></i> Email (for receipt)</label>
+                    <input type="email" class="form-control" name="customerEmail" placeholder="customer@example.com">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label"><i class="fas fa-hashtag"></i> Table / order #</label>
+                    <input type="text" class="form-control" name="tableNumber" placeholder="T5, online, etc">
+                </div>
+
+                <!-- Billing date (auto maybe) -->
+                <div class="col-md-6">
+                    <label class="form-label"><i class="fas fa-calendar-day"></i> Bill date</label>
+                    <input type="date" class="form-control" name="billDate" th:value="${#dates.format(new java.util.Date(), 'yyyy-MM-dd')}">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label"><i class="fas fa-clock"></i> Bill time</label>
+                    <input type="time" class="form-control" name="billTime" th:value="${#dates.format(new java.util.Date(), 'HH:mm')}">
+                </div>
+            </div>
+
+            <!-- Ordered items section (dynamic / line items) -->
+            <h5 class="mt-5 mb-3" style="color:#ff6b35; font-weight: 700;"><i class="fas fa-receipt"></i> ordered items</h5>
+
+            <div class="items-table">
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Item name</th>
+                            <th>Qty</th>
+                            <th>Unit price ($)</th>
+                            <th>Total ($)</th>
+                            <th style="width: 60px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="itemRows">
+                        <tr class="item-row">
+                            <td>1</td>
+                            <td><input type="text" class="form-control" name="itemName[]" placeholder="e.g. Margherita pizza" style="border-radius: 40px;"></td>
+                            <td><input type="number" step="0.01" class="form-control qty-input" name="itemQty[]" value="1" min="0.01" style="width: 90px;"></td>
+                            <td><input type="number" step="0.01" class="form-control price-input" name="itemPrice[]" value="0.00" min="0" style="width: 110px;"></td>
+                            <td><span class="item-total">0.00</span></td>
+                            <td><button type="button" class="btn btn-sm remove-item" style="background:transparent; color:#ff6b35;"><i class="fas fa-trash"></i></button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center add-item-row">
+                <button type="button" id="addItemBtn" class="btn" style="background: #ff6b35; color:white; border-radius: 50px 8px 50px 8px; padding: 10px 25px;">
+                    <i class="fas fa-plus-circle"></i> add item
+                </button>
+                <span class="total-amount" id="grandTotal">Total: $0.00</span>
+            </div>
+
+            <!-- Payment details row -->
+            <div class="row g-4 mt-3">
+                <div class="col-md-4">
+                    <label class="form-label"><i class="fas fa-credit-card"></i> Payment method</label>
+                    <select name="paymentMethod" class="form-select">
+                        <option value="cash">Cash</option>
+                        <option value="card">Credit / Debit card</option>
+                        <option value="upi">UPI / Digital</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label"><i class="fas fa-percent"></i> Tax (%)</label>
+                    <input type="number" step="0.1" class="form-control" name="taxPercent" value="0.00" id="taxPercent">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label"><i class="fas fa-hand-holding-usd"></i> Discount</label>
+                    <input type="number" step="0.01" class="form-control" name="discount" value="0.00" id="discountAmount">
+                </div>
+            </div>
+
+            <!-- Notes -->
+            <div class="mt-4">
+                <label class="form-label"><i class="fas fa-pen"></i> Additional notes</label>
+                <textarea class="form-control" name="notes" placeholder="Special requests, remarks ..." rows="2"></textarea>
+            </div>
+
+            <!-- action buttons -->
+            <div class="button-row">
+                <button type="reset" class="btn-clear"><i class="fas fa-eraser"></i> clear</button>
+                <button type="submit" class="btn-generate"><i class="fas fa-file-invoice"></i> generate bill</button>
+            </div>
+
+        </form>
+
+        <!-- subtle theme hint -->
+        <div style="margin-top: 30px; display: flex; justify-content: flex-end; gap: 12px; color: #94a3b8; font-size: 0.8rem;">
+            <span><i class="fas fa-circle-check" style="color: #22c55e;"></i> auto stock deduction</span>
+            <span><i class="fas fa-shield" style="color: #ff6b35;"></i> GST ready</span>
+        </div>
+
+    </div> <!-- end form-container -->
+</div> <!-- end billing-card -->
+
+<!-- floating helper (back reminder) -->
+<div class="floating-helper">
+    <i class="fas fa-arrow-left" style="color: #ff6b35;"></i> use back button
+</div>
+
+<!-- JavaScript for dynamic item rows + total calculation (simple demo) -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const itemRows = document.getElementById('itemRows');
+        const addItemBtn = document.getElementById('addItemBtn');
+        const grandTotalSpan = document.getElementById('grandTotal');
+        const taxInput = document.getElementById('taxPercent');
+        const discountInput = document.getElementById('discountAmount');
+
+        // function to recalc totals
+        function recalcTotal() {
+            let subtotal = 0;
+            document.querySelectorAll('.item-row').forEach(row => {
+                const qty = parseFloat(row.querySelector('.qty-input').value) || 0;
+                const price = parseFloat(row.querySelector('.price-input').value) || 0;
+                const itemTotal = qty * price;
+                row.querySelector('.item-total').innerText = itemTotal.toFixed(2);
+                subtotal += itemTotal;
+            });
+
+            const tax = parseFloat(taxInput.value) || 0;
+            const discount = parseFloat(discountInput.value) || 0;
+            const taxAmount = subtotal * (tax / 100);
+            const finalTotal = subtotal + taxAmount - discount;
+            grandTotalSpan.innerText = `Total: $${finalTotal.toFixed(2)}`;
+        }
+
+        // add new item row
+        addItemBtn.addEventListener('click', function() {
+            const rowCount = itemRows.children.length + 1;
+            const newRow = document.createElement('tr');
+            newRow.className = 'item-row';
+            newRow.innerHTML = `
+                <td>${rowCount}</td>
+                <td><input type="text" class="form-control" name="itemName[]" placeholder="Item name" style="border-radius: 40px;"></td>
+                <td><input type="number" step="0.01" class="form-control qty-input" name="itemQty[]" value="1" min="0.01" style="width: 90px;"></td>
+                <td><input type="number" step="0.01" class="form-control price-input" name="itemPrice[]" value="0.00" min="0" style="width: 110px;"></td>
+                <td><span class="item-total">0.00</span></td>
+                <td><button type="button" class="btn btn-sm remove-item" style="background:transparent; color:#ff6b35;"><i class="fas fa-trash"></i></button></td>
+            `;
+            itemRows.appendChild(newRow);
+
+            // attach event listeners to new inputs
+            attachRowListeners(newRow);
+            recalcTotal();
+        });
+
+        // remove row
+        function attachRowListeners(row) {
+            row.querySelectorAll('.qty-input, .price-input').forEach(input => {
+                input.addEventListener('input', recalcTotal);
+            });
+            row.querySelector('.remove-item')?.addEventListener('click', function() {
+                if (document.querySelectorAll('.item-row').length > 1) {
+                    row.remove();
+                    // renumber rows
+                    document.querySelectorAll('.item-row').forEach((r, idx) => {
+                        r.children[0].innerText = idx + 1;
+                    });
+                    recalcTotal();
+                } else {
+                    alert("At least one item required.");
+                }
+            });
+        }
+
+        // attach to existing rows
+        document.querySelectorAll('.item-row').forEach(row => attachRowListeners(row));
+
+        // tax, discount listeners
+        taxInput.addEventListener('input', recalcTotal);
+        discountInput.addEventListener('input', recalcTotal);
+
+        // initial calc
+        recalcTotal();
+
+        // handle reset button: add small delay to recalc after reset
+        document.querySelector('button[type="reset"]').addEventListener('click', function(e) {
+            setTimeout(recalcTotal, 50);
+        });
+    });
+</script>
+
+</body>
+</html>

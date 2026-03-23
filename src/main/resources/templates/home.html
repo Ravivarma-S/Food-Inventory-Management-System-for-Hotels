@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartRestaurant · home</title>
+  <!-- Google Fonts + Font Awesome 6 -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f4f9fc;
+      color: #1e293b;
+      overflow-x: hidden;
+    }
+
+    /* ==== modern glass navigation (matching index style) ==== */
+    nav {
+      background: rgba(10, 20, 35, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      padding: 18px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
+      box-shadow: 0 15px 35px -10px rgba(0,0,0,0.4);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(255, 107, 53, 0.5);
+      animation: navSlide 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes navSlide {
+      0% { transform: translateY(-100%); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+
+    nav h2 {
+      margin: 0;
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(145deg, #ff9f4b, #ff4d2e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 32px;
+    }
+
+    nav ul li a {
+      color: #f1f5f9;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 1.1rem;
+      padding: 6px 0;
+      position: relative;
+      transition: 0.2s;
+    }
+
+    nav ul li a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0%;
+      height: 2.5px;
+      background: #ff6b35;
+      transition: width 0.25s ease;
+    }
+
+    nav ul li a:hover {
+      color: white;
+    }
+    nav ul li a:hover::after {
+      width: 100%;
+    }
+
+    /* ==== hero with animated gradient overlay + floating shapes ==== */
+    .hero {
+      min-height: 90vh;
+      background: 
+        radial-gradient(circle at 20% 30%, rgba(255, 107, 53, 0.25) 0%, transparent 30%),
+        radial-gradient(circle at 90% 70%, rgba(255, 215, 100, 0.25) 0%, transparent 40%),
+        url('https://assets.architecturaldigest.in/photos/68fb27b891e894bf9bb88663/16:9/w_1620,h_911,c_limit/Untitled%20design%20-%202025-10-24T124601.225.png');
+      background-size: cover, cover, cover;
+      background-position: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      color: white;
+      position: relative;
+      isolation: isolate;
+      animation: heroZoom 1.3s ease;
+    }
+
+    @keyframes heroZoom {
+      0% { opacity: 0; transform: scale(1.05); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 80%);
+      z-index: -1;
+    }
+
+    .hero-content {
+      max-width: 950px;
+      padding: 30px;
+      animation: heroContentUp 1s 0.2s both;
+    }
+
+    @keyframes heroContentUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero h1 {
+      font-size: 4.4rem;
+      font-weight: 800;
+      line-height: 1.2;
+      text-shadow: 0 10px 25px black;
+    }
+
+    .hero h1 span {
+      background: linear-gradient(145deg, #ffb05a, #ff4d2e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+      filter: drop-shadow(0 2px 5px black);
+    }
+
+    .hero p {
+      font-size: 1.3rem;
+      margin: 25px 0 30px;
+      opacity: 0.95;
+      font-weight: 300;
+      backdrop-filter: blur(2px);
+    }
+
+    .btn {
+      padding: 16px 45px;
+      border: none;
+      background: linear-gradient(135deg, #ff6b35, #ff4a1c);
+      color: white;
+      font-weight: 700;
+      font-size: 1.2rem;
+      border-radius: 60px 16px 60px 16px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1);
+      box-shadow: 0 20px 35px -8px #ff4d2e;
+      border: 1px solid rgba(255,255,255,0.3);
+      letter-spacing: 0.5px;
+    }
+
+    .btn:hover {
+      background: linear-gradient(145deg, #ff571f, #ff3000);
+      transform: scale(1.07) translateY(-5px);
+      box-shadow: 0 30px 40px -8px #ff3c00;
+    }
+
+    /* ==== sections – same clean style as index ==== */
+    .section {
+      padding: 90px 8%;
+      text-align: center;
+      background: #ffffff;
+      position: relative;
+    }
+
+    .section:nth-child(even) {
+      background: #f8fcff;
+    }
+
+    .section h2 {
+      font-size: 2.9rem;
+      font-weight: 700;
+      margin-bottom: 60px;
+      background: linear-gradient(145deg, #1e293b, #334155);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+      letter-spacing: -0.02em;
+      position: relative;
+    }
+
+    .section h2::after {
+      content: '';
+      display: block;
+      width: 90px;
+      height: 5px;
+      background: #ff6b35;
+      border-radius: 10px;
+      margin: 18px auto 0;
+      animation: underlinePulse 2.2s infinite alternate;
+    }
+
+    @keyframes underlinePulse {
+      0% { width: 70px; opacity: 0.7; }
+      100% { width: 130px; opacity: 1; }
+    }
+
+    /* ==== card grid – 3D hover + micro animations ==== */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 40px;
+      margin-top: 20px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(8px);
+      padding: 40px 25px 35px;
+      border-radius: 50px 20px 50px 20px;
+      box-shadow: 0 30px 40px -20px rgba(0,0,0,0.2),
+                  inset 0 1px 1px rgba(255,255,255,0.7);
+      transition: all 0.35s cubic-bezier(0.15, 0.75, 0.45, 1);
+      border: 1px solid rgba(255, 107, 53, 0.2);
+      transform-style: preserve-3d;
+    }
+
+    .card:hover {
+      transform: translateY(-16px) rotateX(1deg) rotateY(1deg);
+      box-shadow: 0 45px 60px -18px #ff6b35b0, 0 0 0 2px rgba(255, 107, 53, 0.5);
+      background: white;
+      border-color: #ff9f4b;
+    }
+
+    .card i {
+      font-size: 3.8rem;
+      background: linear-gradient(150deg, #ff6b35, #ffa75e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 22px;
+      transition: transform 0.25s;
+      display: inline-block;
+    }
+
+    .card:hover i {
+      transform: scale(1.15) rotate(4deg);
+    }
+
+    .card h4 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+      color: #0f172a;
+    }
+
+    .card p {
+      color: #334155;
+      font-weight: 400;
+      line-height: 1.6;
+    }
+
+    /* ==== featured section (today's special) with parallax style ==== */
+    .featured-special {
+      background: linear-gradient(115deg, #0e1a27, #1f2b39);
+      color: white;
+      padding: 70px 8%;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 50px;
+      justify-content: center;
+      border-top: 4px solid #ff6b35;
+      border-bottom: 4px solid #ff6b35;
+    }
+
+    .special-text {
+      flex: 1 1 300px;
+    }
+
+    .special-text h3 {
+      font-size: 2.7rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .special-text h3 i {
+      color: #ffb347;
+      margin-right: 15px;
+    }
+
+    .special-badge {
+      background: #ff6b35;
+      padding: 8px 28px;
+      border-radius: 40px 8px 40px 8px;
+      display: inline-block;
+      font-weight: 700;
+      margin: 20px 0 10px;
+      box-shadow: 0 8px 18px #ff4d2e80;
+      animation: badgeGlow 2s infinite;
+    }
+
+    @keyframes badgeGlow {
+      0% { box-shadow: 0 4px 12px #ff6b35; }
+      50% { box-shadow: 0 10px 25px #ffb347; }
+    }
+
+    .special-dish {
+      flex: 1 1 300px;
+      background: rgba(255,255,255,0.02);
+      border-radius: 120px 30px 120px 30px;
+      padding: 30px;
+      text-align: center;
+      border: 1px solid #ffb34730;
+      backdrop-filter: blur(8px);
+      animation: floatDish 6s infinite alternate;
+    }
+
+    @keyframes floatDish {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-15px); }
+    }
+
+    .special-dish i {
+      font-size: 7rem;
+      color: #ffb85b;
+      filter: drop-shadow(0 10px 15px black);
+    }
+
+    /* ==== alert strip – animated low stock warning ==== */
+    .alert-strip {
+      background: linear-gradient(125deg, #0b121f, #1f2937);
+      color: white;
+      padding: 50px 8%;
+      text-align: center;
+      border-bottom: 2px solid #ff6b35;
+    }
+
+    .alert-box {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(12px);
+      border: 1px solid #ff6b35;
+      color: #fff4e8;
+      padding: 35px 30px;
+      border-radius: 80px 20px 80px 20px;
+      max-width: 850px;
+      margin: 20px auto 0;
+      animation: alertPulse 2.8s infinite;
+    }
+
+    @keyframes alertPulse {
+      0% { box-shadow: 0 0 10px #ff6b35, 0 0 20px #ffaa33; }
+      50% { box-shadow: 0 0 20px #ffaa33, 0 0 40px #ff6b35; }
+    }
+
+    .alert-box i {
+      color: #ffb347;
+      font-size: 2.8rem;
+      margin-right: 12px;
+    }
+
+    .alert-box p {
+      font-size: 1.5rem;
+      font-weight: 500;
+      background: rgba(0,0,0,0.3);
+      padding: 12px 30px;
+      border-radius: 60px;
+      display: inline-block;
+    }
+
+    /* ==== footer ==== */
+    footer {
+      background: #0b121f;
+      color: #ddd;
+      text-align: center;
+      padding: 45px 20px 35px;
+      border-top: 5px solid #ff6b35;
+    }
+
+    footer h3 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      background: linear-gradient(145deg, #fba, #ff6b35);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 15px;
+    }
+
+    .footer-icons {
+      display: flex;
+      gap: 25px;
+      justify-content: center;
+      margin: 25px 0 15px;
+    }
+
+    .footer-icons a {
+      color: #ffb347;
+      font-size: 1.8rem;
+      transition: 0.2s;
+    }
+    .footer-icons a:hover {
+      transform: scale(1.2) translateY(-5px);
+      color: #ff6b35;
+    }
+
+    /* floating stock health (like in original) */
+    .floating-indicator {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      background: #1e293b;
+      color: white;
+      padding: 16px 24px;
+      border-radius: 80px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-weight: 600;
+      box-shadow: 0 20px 35px #00000070;
+      border: 1px solid #ff6b35;
+      z-index: 99;
+      backdrop-filter: blur(6px);
+      animation: floatBadge 4s infinite alternate;
+    }
+    @keyframes floatBadge {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-12px); }
+    }
+    .green-dot {
+      width: 14px;
+      height: 14px;
+      background: #4ade80;
+      border-radius: 50%;
+      box-shadow: 0 0 0 4px #4ade8050;
+      animation: pulseDot 1.8s infinite;
+    }
+    @keyframes pulseDot {
+      0% { box-shadow: 0 0 0 0 #4ade80; }
+      70% { box-shadow: 0 0 0 12px #4ade8000; }
+    }
+
+    /* responsive */
+    @media (max-width: 700px) {
+      nav { flex-direction: column; gap: 12px; padding: 15px; }
+      nav ul { flex-wrap: wrap; justify-content: center; }
+      .hero h1 { font-size: 2.8rem; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <h2><i class="fas fa-flame" style="color:#ff6b35; margin-right: 5px;"></i>smartRestaurant</h2>
+    <ul>
+      <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
+
+	  <li><a href="/addstocks"><i class="fas fa-plus-circle"></i> Add Stock</a></li>
+	  <li><a href="/addincredients"><i class="fas fa-plus-circle"></i> Incredients</a></li>
+	  <li><a href="/billing"><i class="fas fa-file-invoice"></i> Food Billing</a></li>
+	  <li><a href="/viewstocks"><i class="fas fa-chart-pie"></i> Reports</a></li>
+      <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero section – bold & animated -->
+  <div class="hero">
+    <div class="hero-content">
+      <h1><span>smart</span>Restaurant <br> inventory & billing hub</h1>
+      <p>⚡ real‑time stock · auto recipe deduction · AI low‑stock alerts ⚡</p>
+      <button class="btn"><i class="fas fa-rocket" style="margin-right: 10px;"></i> explore dashboard</button>
+    </div>
+  </div>
+
+  <!-- System modules (cards) same style as index, but fresh -->
+  <div class="section">
+    <h2><i class="fas fa-cogs" style="margin-right: 12px;"></i> core modules</h2>
+    <div class="cards">
+
+      <div class="card">
+        <i class="fas fa-boxes"></i>
+        <h4>stock manager</h4>
+        <p>live ingredient tracking, expiry alerts, and multi‑location inventory.</p>
+      </div>
+
+      <div class="card">
+        <i class="fas fa-receipt"></i>
+        <h4>smart billing</h4>
+        <p>one‑click billing with auto‑deduction of raw materials from stock.</p>
+      </div>
+
+      <div class="card">
+        <i class="fas fa-rotate fa-spin" style="--fa-animation-duration: 8s;"></i>
+        <h4>auto recipe</h4>
+        <p>predefined recipes → ingredients update automatically on every sale.</p>
+      </div>
+
+      <div class="card">
+        <i class="fas fa-bell"></i>
+        <h4>low stock AI</h4>
+        <p>predictive alerts when ingredients fall below threshold, avoid shortage.</p>
+      </div>
+
+      <div class="card">
+        <i class="fas fa-chart-pie"></i>
+        <h4>analytics</h4>
+        <p>daily usage, cost reports, and wastage insights for better purchasing.</p>
+      </div>
+
+      <div class="card">
+        <i class="fas fa-lock"></i>
+        <h4>admin hub</h4>
+        <p>secure dashboard with staff permissions and audit trail.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Today's special / featured section (extra restaurant vibe) -->
+  <div class="featured-special">
+   
+    <div class="special-dish">
+      <i class="fas fa-bowl-food"></i>
+      <h4 style="color: #ffb347; margin-top: 20px;">risotto AI monitor</h4>
+      <p style="color: #ccc;">low‑stock prediction: 2 days</p>
+    </div>
+  </div>
+
+  <!-- low stock alert highlight (animated) -->
+  <div class="alert-strip">
+    <h2 style="color: white; font-size: 2.5rem;">⚡ live low‑stock alerts ⚡</h2>
+    <p style="opacity: 0.9;">never run out during peak hours</p>
+    
+  </div>
+
+ 
+
+  <!-- footer same style as index, but richer -->
+  <footer>
+    <h3><i class="fas fa-infinity"></i> SmartRestaurant inventory system</h3>
+    <p>automated stock control · smart billing · real‑time alerts</p>
+    
+     </footer>
+
+  
+</body>
+</html>

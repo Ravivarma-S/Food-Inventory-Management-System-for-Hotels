@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>SmartRestaurant · edit stock</title>
+
+    <!-- Google Fonts + Font Awesome 6 (matching theme) -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- Bootstrap (keep for grid and form structure, but we'll override with theme) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f0f5fa;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 20px;
+        }
+
+        /* animated background orbs (same as add-stock / view-stocks theme) */
+        body::before {
+            content: '';
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle at 30% 30%, #ff6b35, #ffa05e);
+            top: -60px;
+            left: -60px;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.25;
+            animation: orbMove 16s infinite alternate;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle at 70% 80%, #4a90e2, #a855f7);
+            bottom: -80px;
+            right: -70px;
+            border-radius: 50%;
+            filter: blur(130px);
+            opacity: 0.2;
+            animation: orbMove2 20s infinite alternate;
+            z-index: 0;
+        }
+
+        @keyframes orbMove {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(50px, 30px) scale(1.3); }
+        }
+        @keyframes orbMove2 {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(-70px, -20px) scale(1.4); }
+        }
+
+        /* main card – glassmorphism with theme */
+        .edit-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-radius: 70px 24px 70px 24px;
+            box-shadow: 0 40px 70px -20px #00000080, 0 0 0 1px rgba(255, 107, 53, 0.3);
+            width: 100%;
+            max-width: 900px;
+            z-index: 10;
+            position: relative;
+            overflow: hidden;
+            animation: cardGlide 0.7s cubic-bezier(0.2, 0.9, 0.3, 1);
+            border: 1px solid rgba(255, 107, 53, 0.4);
+            margin: 20px;
+        }
+
+        @keyframes cardGlide {
+            0% { opacity: 0; transform: scale(0.94) translateY(30px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        /* header with back button + title – exact copy from add-stock */
+        .stock-header {
+            background: linear-gradient(105deg, #0b1725, #162433);
+            padding: 20px 35px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            border-bottom: 2px solid #ff6b35;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid #ff6b35;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+            padding: 10px 25px 10px 18px;
+            border-radius: 50px 12px 50px 12px;
+            cursor: pointer;
+            transition: 0.25s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(4px);
+        }
+
+        .back-btn i {
+            font-size: 1.3rem;
+            color: #ffb347;
+        }
+
+        .back-btn:hover {
+            background: #ff6b35;
+            border-color: white;
+            transform: translateX(-5px);
+        }
+        .back-btn:hover i {
+            color: white;
+        }
+
+        .stock-header h2 {
+            color: white;
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-left: auto;
+            letter-spacing: -0.5px;
+        }
+        .stock-header h2 i {
+            color: #ffb347;
+            margin-right: 12px;
+        }
+
+        /* form container – consistent padding */
+        .form-container {
+            padding: 40px 45px 45px;
+            background: #ffffffd9;
+        }
+
+        /* form labels with icons (theme style) */
+        .form-label {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #1e293b;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .form-label i {
+            color: #ff6b35;
+            width: 22px;
+            font-size: 1.1rem;
+        }
+
+        /* override bootstrap form controls with theme design */
+        .form-control, .form-select {
+            width: 100%;
+            padding: 14px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 40px 12px 40px 12px !important;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            background: white;
+            transition: all 0.2s ease;
+            outline: none;
+            box-shadow: none;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #ff6b35;
+            box-shadow: 0 0 0 5px #ff6b3520, 0 8px 12px -10px black;
+            transform: scale(1.01);
+        }
+
+        /* select arrow custom (optional, but keep default) */
+        .form-select {
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23ff6b35' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 20px center;
+            background-size: 16px;
+        }
+
+        /* row spacing */
+        .row.g-3 {
+            margin-top: 10px;
+        }
+
+        /* buttons – theme style */
+        .btn-update {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            border: none;
+            padding: 14px 40px;
+            border-radius: 60px 12px 60px 12px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            transition: 0.25s;
+            box-shadow: 0 20px 30px -10px #28a74580;
+            border: 1px solid rgba(255,255,255,0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin: 0 10px;
+        }
+
+        .btn-update:hover {
+            background: linear-gradient(145deg, #2ecc71, #1e7e34);
+            transform: scale(1.03) translateY(-3px);
+            box-shadow: 0 28px 40px -8px #28a745c0;
+        }
+
+        .btn-cancel {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            border: none;
+            padding: 14px 40px;
+            border-radius: 60px 12px 60px 12px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            transition: 0.25s;
+            box-shadow: 0 20px 30px -10px #dc354580;
+            border: 1px solid rgba(255,255,255,0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .btn-cancel:hover {
+            background: linear-gradient(145deg, #e04b5c, #b21f2d);
+            transform: scale(1.03) translateY(-3px);
+            box-shadow: 0 28px 40px -8px #dc3545c0;
+            color: white;
+        }
+
+        .btn-update i, .btn-cancel i {
+            transition: transform 0.2s;
+        }
+        .btn-update:hover i, .btn-cancel:hover i {
+            transform: translateX(5px);
+        }
+
+        /* button container */
+        .text-center.mt-4 {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 35px !important;
+        }
+
+        /* extra hint (same as other pages) */
+        .floating-helper {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            opacity: 0.4;
+            font-size: 0.9rem;
+            z-index: 99;
+        }
+
+        /* responsive adjustments */
+        @media (max-width: 600px) {
+            .stock-header { flex-direction: column; align-items: start; }
+            .stock-header h2 { margin-left: 0; }
+            .form-container { padding: 25px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="edit-card">
+
+    <!-- header with back button (exact same as add-stock page) -->
+    <div class="stock-header">
+        <!-- Back button uses window.location.href – change to appropriate back path if needed -->
+        <button class="back-btn" onclick="window.location.href='/viewstocks'">
+            <i class="fas fa-arrow-left"></i> Back
+        </button>
+        <h2><i class="fas fa-pen-to-square"></i> edit stock</h2>
+    </div>
+
+    <!-- form container -->
+    <div class="form-container">
+
+        <form th:action="@{/updatestock}" method="post">
+
+            <!-- Hidden ID -->
+            <input type="hidden" name="id" th:value="${stock.id}">
+
+            <div class="row g-3">
+                <!-- Product Name -->
+                <div class="col-md-6">
+                    <label class="form-label">
+                        <i class="fas fa-seedling"></i> Product Name
+                    </label>
+                    <input type="text"
+                           name="productName"
+                           class="form-control"
+                           th:value="${stock.productName}"
+                           required>
+                </div>
+
+                <!-- Unit -->
+                <div class="col-md-6">
+                    <label class="form-label">
+                        <i class="fas fa-balance-scale"></i> Unit
+                    </label>
+                    <select name="unit" class="form-select" required>
+                        <option th:selected="${stock.unit == 'kg'}">kg</option>
+                        <option th:selected="${stock.unit == 'g'}">g</option>
+                        <option th:selected="${stock.unit == 'L'}">L</option>
+                        <option th:selected="${stock.unit == 'ml'}">ml</option>
+                        <option th:selected="${stock.unit == 'pcs'}">pcs</option>
+                        <option th:selected="${stock.unit == 'dozen'}">dozen</option>
+                        <option th:selected="${stock.unit == 'box'}">box</option>
+                        <option th:selected="${stock.unit == 'bag'}">bag</option>
+                    </select>
+                </div>
+
+                <!-- Quantity -->
+                <div class="col-md-6">
+                    <label class="form-label">
+                        <i class="fas fa-cubes"></i> Quantity
+                    </label>
+                    <input type="number"
+                           name="quantity"
+                           step="0.01"
+                           class="form-control"
+                           th:value="${stock.quantity}"
+                           required>
+                </div>
+
+                <!-- Reorder Level -->
+                <div class="col-md-6">
+                    <label class="form-label">
+                        <i class="fas fa-exclamation-triangle"></i> Reorder Level
+                    </label>
+                    <input type="number"
+                           name="reorderLevel"
+                           step="0.01"
+                           class="form-control"
+                           th:value="${stock.reorderLevel}"
+                           required>
+                </div>
+
+                <!-- Expiry Date -->
+                <div class="col-md-12">
+                    <label class="form-label">
+                        <i class="fas fa-calendar-alt"></i> Expiry Date
+                    </label>
+                    <input type="date"
+                           name="expiryDate"
+                           class="form-control"
+                           th:value="${stock.expiryDate}">
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="text-center mt-4">
+                <button type="submit" class="btn-update">
+                    <i class="fas fa-save"></i> Update
+                </button>
+
+                <a href="/viewstocks" class="btn-cancel">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+            </div>
+
+        </form>
+
+        <!-- subtle theme hint (optional) -->
+        <div style="margin-top: 30px; display: flex; justify-content: flex-end; gap: 12px; color: #94a3b8; font-size: 0.8rem;">
+            <span><i class="fas fa-circle-check" style="color: #22c55e;"></i> auto-save ready</span>
+            <span><i class="fas fa-shield" style="color: #ff6b35;"></i> secure update</span>
+        </div>
+
+    </div> <!-- end form-container -->
+</div> <!-- end edit-card -->
+
+<!-- floating helper (same as add-stock) -->
+<div class="floating-helper">
+    <i class="fas fa-arrow-left" style="color: #ff6b35;"></i> use back button
+</div>
+
+</body>
+</html>

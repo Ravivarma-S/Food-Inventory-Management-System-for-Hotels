@@ -200,7 +200,7 @@ public class RestaurentController {
 
 	                    String ingredientName = ing.getIngName();
 
-	                    double ingredientQty = Double.parseDouble(ing.getIngQty());
+	                    double ingredientQty = ing.getIngQty();
 
 	                    double totalRequired = ingredientQty * orderedQty;
 

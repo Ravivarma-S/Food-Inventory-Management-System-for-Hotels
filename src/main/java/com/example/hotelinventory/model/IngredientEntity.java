@@ -12,7 +12,7 @@ public class IngredientEntity {
 
     private String ingName;
     private String ingUnit;
-    private String ingQty;
+    private double ingQty;
     private String ingNote;
 
     @ManyToOne
@@ -39,11 +39,11 @@ public class IngredientEntity {
         this.ingUnit = ingUnit;
     }
 
-    public String getIngQty() {
+    public double getIngQty() {
         return ingQty;
     }
 
-    public void setIngQty(String ingQty2) {
+    public void setIngQty(double ingQty2) {
         this.ingQty = ingQty2;
     }
 
